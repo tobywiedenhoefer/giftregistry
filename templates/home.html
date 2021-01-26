@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div id="navButtons">
+        <button onclick="document.location.href=this.getAttribute('href');" href="{{ url_for('login') }}">Login</button>
+        <button onclick="document.location.href=this.getAttribute('href');" href="{{ url_for('signup') }}">Sign Up</button>
+    </div>
+    <script type="text/javascript">
+    </script>
+{% endblock content %}
