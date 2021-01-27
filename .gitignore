@@ -131,3 +131,5 @@ dmypy.json
 venv/
 .vscode/
 .idea
+pylintrc
+site.db

@@ -1,6 +1,8 @@
-from datetime import datetime
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+
+from datetime import datetime
 from os import environ
 
 app = Flask(__name__)
@@ -9,6 +11,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True # suppresses a warning message
 app.config['WTF_CSRF_ENABLED'] = False # suppress Flask-wtf cross-site registry forgery protection
 db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
 
 
 class User(db.Model):
@@ -19,7 +22,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_file = db.Column(db.String(20), unique=False, nullable=False, default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
-    gifts = db.relationship('Gifts', backref='user', lazy=True)
+    gifts = db.relationship('Gift', backref='user', lazy=True)
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.image_file}')"
@@ -33,7 +36,7 @@ class Gift(db.Model):
     title = db.Column(db.String(100), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     description = db.Column(db.Text, nullable=True)
-    holiday = db.Column(db.String(50), nullable=True)
+    # holiday = db.relationship('Gift', backref='gift', lazy=True)
 
     def __repr__(self):
         return f"Gift( '{self.title}', '{self.date_posted}')"
