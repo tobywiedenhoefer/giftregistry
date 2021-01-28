@@ -20,19 +20,22 @@ def signup():
     """
     User can sign up.
     """
+    if current_user.is_authenticated:
+        return redirect(url_for('splash'))
+
     form = RegistrationForm()
 
-    if form.validate_on_submit() and request.method == "POST":
+    if form.validate_on_submit():
 
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user = User(username=form.username.data, email=form.email.data, password=hashed_password)
 
         db.session.add(user)
         db.session.commit()
+
         print(User.query.all())
-
-
         flash('Account created, please login.', 'success')
+
         return redirect(url_for('login'))
 
     return render_template('signup.html', title='Sign Up', form=form)
@@ -44,20 +47,19 @@ def login():
         return redirect(url_for('splash'))
 
     form = LoginForm()
+
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
+
             get_next = request.args.get('next')
 
             if get_next:
                 return redirect(url_for(get_next))
-            else:
-                return redirect(url_for('splash'))
+            return redirect(url_for('splash'))
 
         else:
-            print('unsuccessful')
             flash('Login Unsuccessful. Please check email and password.', 'danger')
     return render_template('login.html', title='Login', form=form)
 
