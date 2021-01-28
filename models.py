@@ -1,6 +1,8 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
+from flask_login import UserMixin
 
 from datetime import datetime
 from os import environ
@@ -12,9 +14,17 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True # suppresses a warning messa
 app.config['WTF_CSRF_ENABLED'] = False # suppress Flask-wtf cross-site registry forgery protection
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+login_manager.login_message_category = 'info'
 
 
-class User(db.Model):
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
+class User(db.Model, UserMixin):
     __tablename__ = "user"
 
     id = db.Column(db.Integer, primary_key=True)
