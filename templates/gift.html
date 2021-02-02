@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div>
+        <h2>{{gift.title}}</h2>
+        {% if gift.link|length > 0 %}
+            <p>{{ gift.link }}</p> // turn this into the root website... ex: www.amazon.com/something -> amazon
+        {% endif %}
+        {% if gift.description|length >0 %}
+            <p>{{gift.description}}</p>
+        {% endif %}
+    </div>
+    <div>
+        {% if current_user.id == gift.user_id.id %}
+            <p>Owner</p> // have option to update or delete post/info
+        {% else %}
+            <p>guest</p> // guests can view and comment
+        {% endif %}
+    </div>
+{% endblock content %}

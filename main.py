@@ -104,7 +104,6 @@ def account():
             current_user.image_file = picture_file
         current_user.username = form.username.data
         current_user.email = form.email.data
-        print(f'Form: {form.username.data}\tcurrent_user: {current_user.username}')
         db.session.commit()
         flash("Account updated!", "success")
         return redirect(url_for('account'))
@@ -133,6 +132,13 @@ def add_gift():
 def wishlist():
     gifts = Gift.query.filter_by(user_id=current_user.id).all()
     return render_template('wishlist.html', title="Wishlist", gifts=gifts)
+
+
+@login_required
+@app.route("/gift/<int:gift_id>")
+def view_gift(gift_id):
+    gift = Gift.query.get_or_404(gift_id)
+    return render_template('gift.html', title=gift.title, gift=gift)
 
 
 if __name__ == "__main__":
