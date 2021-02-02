@@ -41,10 +41,11 @@ class User(db.Model, UserMixin):
 class Gift(db.Model):
     __tablename__ = "gift"
 
-    id = db.Column(db.Integer, primary_key=True)
+    giftid = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     title = db.Column(db.String(100), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    link = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
     # holiday = db.relationship('Gift', backref='gift', lazy=True)
 
@@ -56,7 +57,7 @@ class Holidays(db.Model):
     __tablename__ = "holiday"
 
     id = db.Column(db.Integer, primary_key=True)
-    gift_id = db.Column(db.Integer, db.ForeignKey('gift.id'), nullable=False)
+    gift_id = db.Column(db.Integer, db.ForeignKey('gift.giftid'), nullable=False)
     holiday = db.Column(db.String(100), nullable=True)
     date = db.Column(db.DateTime, nullable=True)
 

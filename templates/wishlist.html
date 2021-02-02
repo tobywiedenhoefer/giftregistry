@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block content %}
+    {% for gift in gifts %}
+        <h2>{{ gift.title }}</h2>
+        {% if gift.link|length > 0 %}
+            <p>{{ gift.link }}</p>
+        {% endif %}
+        {% if gift.description|length > 0 %}
+            <p>{{ gift.description }}</p>
+        {% endif %}
+    {% endfor %}
+{% endblock content %}
