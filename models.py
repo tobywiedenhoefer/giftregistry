@@ -32,7 +32,10 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_file = db.Column(db.String(20), unique=False, nullable=False, default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
+
     gifts = db.relationship('Gift', backref='user', lazy=True)
+    user_rel = db.relationship('UserRelationship', backref='user', lazy=True)
+
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.image_file}')"
@@ -43,10 +46,12 @@ class Gift(db.Model):
 
     giftid = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    
     title = db.Column(db.String(100), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     link = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
+    public = db.Column(db.Boolean, nullable=False, default=True)
     # holiday = db.relationship('Gift', backref='gift', lazy=True)
 
     def __repr__(self):
@@ -63,6 +68,22 @@ class Holidays(db.Model):
 
     def __repr__(self):
         return f"Holiday( '{self.Holiday}'"
+
+
+class UserRelationship(db.Model):
+    __tablename__ = "userrelationship"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    rel_type = db.Column(db.String(10), nullable=False)
+    follower_id = db.Column(db.Integer, nullable=True)
+    following_id = db.Column(db.Integer, nullable=True)
+    
+    def __repr__(self):
+        if self.rel_type == "following":
+            return(f'{self.user_id} is {self.rel_type} {self.following_id}')
+        elif self.rel_type == "follower":
+            return(f'{self.user_id} has gained a {self.rel_type}: {self.follower_id}')
 
 db.drop_all()
 db.create_all()
