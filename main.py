@@ -5,13 +5,16 @@ from flask import Flask, render_template, request, flash, redirect, url_for, req
 from flask_login import login_user, current_user, logout_user, login_required
 
 from models import app, db, User, Gift, Holidays, bcrypt, login_manager
-from forms import RegistrationForm, LoginForm, UpdateAccountForm, GiftForm
+from forms import RegistrationForm, LoginForm, UpdateAccountForm, GiftForm, UpdateGiftForm
 
 
 hashed_password = bcrypt.generate_password_hash("testtest").decode('utf-8')
 user = User(username="test", email="test@test.com", password=hashed_password)
+gift = Gift(user_id=1, title="OneTitle", link="Onelink", description="OneDescription")
 
 db.session.add(user)
+db.session.commit()
+db.session.add(gift)
 db.session.commit()
 
 def save_picture(form_picture):
@@ -135,10 +138,19 @@ def wishlist():
 
 
 @login_required
-@app.route("/gift/<int:gift_id>")
+@app.route("/gift/<int:gift_id>", methods=['POST', 'GET'])
 def view_gift(gift_id):
     gift = Gift.query.get_or_404(gift_id)
-    return render_template('gift.html', title=gift.title, gift=gift)
+    form = UpdateGiftForm(title=gift.title, link=gift.link, description=gift.description)
+    if form.validate_on_submit():
+        gift.title = form.title.data
+        gift.link = form.link.data
+        gift.description = form.description.data
+        db.session.commit()
+        flash("Gift updated!", "success")
+        print(Gift.query.all())
+        return redirect(url_for('view_gift', gift_id=gift_id))
+    return render_template('gift.html', title=gift.title, gift=gift, form=form)
 
 
 if __name__ == "__main__":

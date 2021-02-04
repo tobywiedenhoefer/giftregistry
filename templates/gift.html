@@ -1,19 +1,112 @@
 {% extends "layout.html" %}
+{% block addcss %}
+
+<style>
+    .collapsible {
+      background-color: #777;
+      color: white;
+      cursor: pointer;
+      padding: 18px;
+      border: none;
+      text-align: left;
+      outline: none;
+      font-size: 15px;
+    }
+    
+    .active, .collapsible:hover {
+      background-color: #555;
+    }
+    
+    .content {
+      padding: 0 18px;
+      display: none;
+      overflow: hidden;
+      background-color: #f1f1f1;
+    }
+</style>
+
+{% endblock addcss %}
 {% block content %}
     <div>
         <h2>{{gift.title}}</h2>
         {% if gift.link|length > 0 %}
-            <p>{{ gift.link }}</p> // turn this into the root website... ex: www.amazon.com/something -> amazon
+            <p>{{ gift.link }}</p>
         {% endif %}
         {% if gift.description|length >0 %}
             <p>{{gift.description}}</p>
         {% endif %}
     </div>
     <div>
-        {% if current_user.id == gift.user_id.id %}
-            <p>Owner</p> // have option to update or delete post/info
+        {% if current_user.id == gift.user_id %}
+            <button type="button" class="collapsible">Edit Gift Info</button>
+            <div class="content">
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    <fieldset class="form-group">
+                        <legend class="border-bottom mb-4">Update this gift's information</legend>
+                        <div class="form-group">
+                            {{ form.title.label(class="form-control-label") }}
+                            {% if form.title.errors %}
+                                {{ form.title(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.title.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.title(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.link.label(class="form-control-label") }}
+                            {% if form.link.errors %}
+                                {{ form.link(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.link.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.link(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.description.label(class="form-control-label") }}
+                            {% if form.description.errors %}
+                                {{ form.link(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.description.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.description(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                    </fieldset>
+                    <div class="form-group">
+                        {{ form.submit(class="btn btn-outline-info") }}
+                    </div>
+                </form>
+            </div>
         {% else %}
-            <p>guest</p> // guests can view and comment
+            <p>guests can view and comment</p>
         {% endif %}
     </div>
+    <script>
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+        
+        for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        }
+    </script>
 {% endblock content %}

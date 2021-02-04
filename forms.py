@@ -103,3 +103,10 @@ class GiftForm(FlaskForm):
     description = TextAreaField('Description', validators=[Length(min=0, max=300)])
 
     submit = SubmitField('Add')
+
+class UpdateGiftForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired(), Length(min=1, max=100)])
+    link = StringField('Link', validators=[Length(min=0, max=100)])
+    description = TextAreaField('Description', validators=[Length(min=0, max=300)])
+
+    submit = SubmitField('Update')
