@@ -8,16 +8,26 @@ from models import app, db, User, Gift, Holidays, bcrypt, login_manager
 from forms import RegistrationForm, LoginForm, UpdateAccountForm, GiftForm, UpdateGiftForm
 
 
-hashed_password = bcrypt.generate_password_hash("testtest").decode('utf-8')
-user = User(username="test", email="test@test.com", password=hashed_password)
-gift = Gift(user_id=1, title="OneTitle", link="Onelink", description="OneDescription")
+test_user = User(username="test", email="test@test.com", password=bcrypt.generate_password_hash("password").decode("utf-8"))
+db.session.add(test_user)
+db.session.commit()
 
-db.session.add(user)
+gift1 = Gift(user_id=db.session.query(User).filter_by(username=test_user.username).one().id, title="Gift 1", description="Description 1")
+db.session.add(gift1)
 db.session.commit()
-db.session.add(gift)
+
+gift2 = Gift(user_id=db.session.query(User).filter_by(username=test_user.username).one().id, title="Gift 2", description="Description 2")
+db.session.add(gift2)
 db.session.commit()
+
+
+WEBSITE_NAME = "Website Name"
 
 def save_picture(form_picture):
+    """
+    Save a user's profile picture to the db.
+    form_picture: db row for picture.
+    """
     _, extension = os.path.splitext(form_picture.filename)
     file_name = bcrypt.generate_password_hash(str(current_user.id))
     picture_path = os.path.join(app.root_path, 'static/account_pictures', file_name + extension)
@@ -34,6 +44,17 @@ def save_picture(form_picture):
 def splash():
     """
     Splash page
+    """
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
+    return render_template('splash.html', title=WEBSITE_NAME)
+
+
+@app.route('/home')
+def home():
+    """
+    Page for authenticated user.
     """
     return render_template('home.html', title="Home")
 

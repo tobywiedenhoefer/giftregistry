@@ -49,7 +49,7 @@ class Gift(db.Model):
     
     title = db.Column(db.String(100), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    link = db.Column(db.String(100), nullable=False)
+    link = db.Column(db.String(100), nullable=True)
     description = db.Column(db.Text, nullable=True)
     public = db.Column(db.Boolean, nullable=False, default=True)
     # holiday = db.relationship('Gift', backref='gift', lazy=True)

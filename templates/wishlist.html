@@ -2,7 +2,7 @@
 {% block content %}
     {% for gift in gifts %}
         <h2>{{ gift.title }}</h2>
-        {% if gift.link|length > 0 %}
+        {% if gift.link is not none %}
             <p>{{ gift.link }}</p>
         {% endif %}
         {% if gift.description|length > 0 %}
